@@ -25,7 +25,7 @@ Your file will then appear with its new name.
 
 Let's keep working with the `penguins` data set. Recall that this data set has information about 333 penguins collected from 3 islands in the Palmer Archipelago in Antarctica. Data were collected and made available by [Dr. Kristen Gorman](https://www.uaf.edu/cfos/people/faculty/detail/kristen-gorman.php) and the [Palmer Station, Antarctica LTER](https://pal.lternet.edu/), a member of the [Long Term Ecological Research Network](https://lternet.edu/), and the data were prepared by [Dr. Allison Horst](https://github.com/allisonhorst/palmerpenguins).
 
-For Homework 1 Question 8, you will produce numerical and graphical displays to investigate and compare the body masses (in grams) of the Palmer penguins.
+For Homework 1 Question 7, you will produce numerical and graphical displays to investigate and compare the body masses (in grams) of the Palmer penguins.
 
 ## Read in the Data
 
@@ -129,4 +129,4 @@ constantly update the numbering when you move things around in editing! -->
 
 ![Click Download to save the file](assets/images/hw1_html_download.png){width="50%"}
 
-Now upload the HTML as your answer to Question 8.1 of HW 1 in Gradescope.
+Now upload the HTML as your answer to Question 7.1 of HW 1 in Gradescope.
