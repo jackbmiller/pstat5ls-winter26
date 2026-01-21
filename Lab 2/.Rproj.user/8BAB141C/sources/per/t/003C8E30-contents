@@ -1,0 +1,91 @@
+---
+title: "STATS 250 Lab 4 Report"
+author: "YOUR NAME GOES HERE - KEEP THE QUOTES"
+date: "TODAY'S DATE GOES HERE - KEEP THE QUOTES"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+    toc_collapsed: yes
+    theme: lumen
+    css: assets/styles.css
+  pdf_document:
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(stats250sbi)
+```
+
+# Introduction
+
+People providing an organ for donation sometimes seek the help of a special medical consultant. These consultants assist the patient in all aspects of the surgery, with the goal of reducing the possibility of complications during the medical procedure and recovery. Patients might choose a consultant based in part on the historical complication rate of the consultant’s clients.
+
+The average complication rate for liver donor surgery in the United States is known to be 10%. One consultant tried to attract patients by claiming her rate is even lower. She reported that out of 62 liver donor surgeries that she has facilitated, only 3 of her clients had complications.
+
+## Research Questions
+
+Does your analysis suggest that this consultant has a lower liver transplant complication rate than the 10% national average? Clearly state "yes" or "no" and briefly (in 1-2 sentences) explain. 
+
+To provide support for your answer:
+
+1. Set the seed to 15 so that the results are reproducible.
+2. Run the simulation 500 times.
+3. Provide numeric support for your answer. 
+4. Provide graphical support for your answer. Your graphical support should include a vertical line at the sample proportion. 
+
+# Background
+
+## Population of Interest
+
+Replace this text with information about the population of interest.
+
+## Study Design
+
+Replace this text with whether this data was collected as part of an observational study or an experiment, and how you know this.
+
+# Methods
+
+We have provided a structure for you in the Methods section, to make your code understandable. Please fill in your answer where it says **"Write your answer here"**. Be sure you define any symbols that you use.
+
+$H_0$: *Write your answer here*
+
+$H_A$: *Write your answer here*
+
+*define your symbol here*
+
+
+|                   | **Assuming the chance model...** |
+|-------------------|----------------------------------|
+|          One draw | *Write your answer here* | 
+|   Blue poker chip | *Write your answer here* | 
+| Yellow poker chip | *Write your answer here* | 
+|    Chance of blue | *Write your answer here* | 
+|    One repetition | *Write your answer here* | 
+
+# Results
+
+```{r setSeed, error = T}
+# Use this code chunk to set the seed to the appropriate value, then run it. Remember, each time you run this chunk, your random number generator starts over.
+
+```
+
+```{r chunk1, error = T}
+# Use this code chunk to write the code necessary to answer the research question. Do not start your code on this line, and do not start your code with # (this is a comment, R will ignore it).
+
+```
+
+```{r chunk2, error = T}
+# Use this code chunk to write the code necessary to answer the research question. Do not start your code on this line, and do not start your code with # (this is a comment, R will ignore it).
+
+```
+
+```{r chunk3, error = T}
+# Use this code chunk to write the code necessary to answer the research question. Do not start your code on this line, and do not start your code with # (this is a comment, R will ignore it).
+
+```
+
+# Conclusion
+
+Replace this text with the answer to the research question. Be sure to include all relevant context and to use support from your Results section.

@@ -1,0 +1,86 @@
+---
+title: "STATS 250 Lab 4 Solutions"
+author: "DO NOT DISTRIBUTE FOR ANY REASON"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+    toc_collapsed: yes
+    theme: lumen
+    css: assets/styles.css
+  pdf_document:
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(stats250sbi)
+```
+
+# Introduction
+
+People providing an organ for donation sometimes seek the help of a special medical consultant. These consultants assist the patient in all aspects of the surgery, with the goal of reducing the possibility of complications during the medical procedure and recovery. Patients might choose a consultant based in part on the historical complication rate of the consultant’s clients.
+
+The average complication rate for liver donor surgery in the United States is known to be 10%. One consultant tried to attract patients by claiming her rate is even lower. She reported that out of 62 liver donor surgeries that she has facilitated, only 3 of her clients had complications.
+
+## Research Questions
+
+Does your analysis suggest that this consultant has a lower liver transplant complication rate than the 10% national average? Clearly state "yes" or "no" and briefly (in 1-2 sentences) explain. 
+
+To provide support for your answer:
+
+1. Set the seed to 15 so that the results are reproducible.
+2. Run the simulation 500 times.
+3. Provide numeric support for your answer. 
+4. Provide graphical support for your answer. Your graphical support should include a vertical line at the sample proportion. 
+
+# Background
+
+## Population of Interest
+
+The population of interest is liver transplant patients (with this consultant group).
+
+## Study Design
+
+This data was from an observational study. There is no mention of an experimental design, such as a control and treatment group.
+
+# Methods
+
+$H_0$: $p = 0.1$
+
+$H_A$: $p < 0.1$
+
+where $p$ represents the population proportion of liver transplant recipients who have a complication.
+
+|                   | **Assuming the chance model...** |
+|-------------------|----------------------------------|
+|          One draw | *the person undergoes a liver transplant* | 
+|   Blue poker chip | *the person has a complication with their liver transplant* | 
+| Yellow poker chip | *the person does not have a complication with their liver transplant* | 
+|    Chance of blue | *0.1* | 
+|    One repetition | *62 liver transplants* | 
+
+# Results
+
+```{r setSeed, error = T}
+set.seed(15)
+```
+
+```{r chunk1, error = T}
+sim2 <- simulate_chance_model(chanceSuccess = 0.1, numDraws = 62, numRepetitions = 500)
+```
+
+```{r chunk2, error = T}
+hist(sim2,
+     main = "Histogram of Simulated Proportions Under H0",
+     xlab = "Simulated Proportions")
+abline(v = 3/62, col = "red")
+```
+
+```{r chunk3, error = T}
+sum(sim2 <= 3/62) / 500
+```
+
+# Conclusion
+
+No, my analysis does not suggest that this consultant has a lower complication rate for liver donor surgeries than the 10% national average. This is because the p-value is 0.136, which is not all that rare. We do not have enough evidence to support her claim.
