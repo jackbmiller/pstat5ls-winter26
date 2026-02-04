@@ -1,0 +1,105 @@
+---
+title: "PSTAT 5LS Lab 3 Notes"
+author: "Your Name Here"
+output: html_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(pstat5lsSBI)
+```
+
+# Lab Notes
+
+Use this place to take any notes during your lab section.
+
+- Type any notes here
+- Add new notes by using the dash `-` to create a list
+
+```{r tryIt1, error = T}
+# Run this code chunk to have R plot what the proportion of AP Statistics test scores less than 2 looks like
+plot_norm(mean = 2.85, 
+          sd = 0.43, 
+          shadeValues = 2, 
+          direction = "less", 
+          col.shade = "cornflowerblue")
+```
+
+```{r tryIt2, error = T}
+# Fill in the values for `q`, `mean`, `sd`, and `lower.tail` below to calculate the proportion of AP Statistics test scores less than 2. Then run this code chunk
+pnorm(q = , 
+      mean = , 
+      sd = , 
+      lower.tail = )
+```
+
+```{r tryIt3, error = T}
+# Run this code chunk to have R plot the proportion of AP Statistics test scores that are between 3 and 3.5
+plot_norm(mean = 2.85, 
+          sd = 0.43, 
+          shadeValues = c(3, 3.5), 
+          direction = "between", 
+          col.shade = "cornflowerblue")
+```
+
+```{r tryIt4, error = T}
+# Below is the code you need to calculate the area between 3 and 3.5 for the AP Statistics test scores. Run this chunk to find this area
+pnorm(c(3, 3.5), 
+      mean = 2.85, 
+      sd = 0.43, 
+      lower.tail = TRUE) 
+
+```
+
+```{r, tryIt5, error = T}
+# Below is the code that would return the proportion of AP Statistics scores to the left of 3.0. Make the change so that R returns the proportion to the RIGHT of 3
+pnorm(q = 3, 
+      mean = 2.85, 
+      sd = 0.43, 
+      lower.tail = TRUE)
+
+```
+
+```{r, tryIt6, error = T}
+# Fill in the values for `p` and `lower.tail` to find the score an AP Statistics student needs to be in the top 10% and then run this chunk 
+qnorm(p = , 
+      mean = 2.85, 
+      sd = 0.43, 
+      lower.tail = )
+
+```
+
+# Code Cheat Sheet
+
+## `plot_norm()` 
+
+- `mean`: the mean of the normal distribution you'd like to draw ($\mu$)
+- `sd`: the standard deviation or standard error of the normal distribution you'd like to draw ($\sigma$ or $\sqrt{\frac{p_0(1-p_0)}{n}}$, respectively)
+- `shadeValues` (optional): either a number or a vector of two numbers (using `c()`) that are the boundaries of the region you'd like to shade.
+- `direction`: where to shade (`"less"`, `"greater"`, `"between"`, or `"beyond"`)
+- `col.shade`: the color to use when shading
+- any other graphical parameters you want to use to control the appearance of the plot (like `main`, etc.)
+
+## `pnorm(q, mean, sd, lower.tail = TRUE)`
+
+- `q`: the x-axis value you want to find an area related to
+- `mean`: the mean of the normal distribution, defaults to 0
+- `sd`: the standard deviation of the normal distribution, defaults to 1
+- `lower.tail` determines whether `pnorm()` finds the area to the left or right of `q`. If `lower.tail` is set to \textcolor{blue}{`TRUE`} (the default), it finds the probability to the \textcolor{blue}{LEFT}. If `lower.tail` is set to \textcolor{red}{`FALSE`}, it finds the probability to the \textcolor{red}{RIGHT}.
+
+## `qnorm(p, mean, sd, lower.tail = TRUE)`
+
+- `p`: the probability or area under the curve you want to find an x-axis value for
+- `mean`: the mean of the normal distribution, defaults to 0
+- `sd`: the standard deviation of the normal distribution, defaults to 1
+- `lower.tail`: determines whether `qnorm()` finds the value of the variable with area `p` to its left or right. If `lower.tail` is set to \textcolor{blue}{`TRUE`} (the default), the area `p` is to the \textcolor{blue}{LEFT}. If `lower.tail` is set to \textcolor{red}{`FALSE`}, the area `p` is to the \textcolor{red}{RIGHT}.
+
+## Important plotting arguments
+
+### `main = "Title of Your Graph in Double Quotes"`
+- graph title that must be inside a set of double quotes
+
+### `xlab = "x-axis Label of Your Graph in Double Quotes"`
+- the x- (horizontal) axis label that must be inside a set of double quotes
+
+### `ylab = "y-axis Label of Your Graph in Double Quotes"`
+- the y- (vertical) axis label that must be inside a set of double quotes
