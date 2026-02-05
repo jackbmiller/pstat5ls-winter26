@@ -1,0 +1,341 @@
+---
+title: "PSTAT 5LS Lab 4"
+output:
+  beamer_presentation:
+    theme: AnnArbor
+    fig_crop: false
+    fig_width: 6
+    fig_height: 4
+  pdf_document: default
+header-includes:
+  - \renewcommand{\footnotesize}{\tiny}
+  # - \newcommand{\theHtable}{\thetable}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(pstat5lsSBI)
+```
+
+# Announcements & Recap
+
+## Announcements
+
+Insert any relevant announcements, important dates, things you want to remember here.
+
+## HW Recap
+
+Write down some common errors that you spotted while you graded/had office hours for HW assignments.
+
+# Learning Objectives
+
+## R Learning Objectives
+
+1.  Work with `pnorm()` and `qnorm()`
+2.  Introduce `prop_test()` to understand test statistics and confidence intervals
+
+## Statistical Learning Objectives
+
+1.  Understand how area under the normal curve relates to probability.
+2.  Understand how to move between probabilities and quantiles of the normal distribution.
+3.  Build intuition for the relationship between simulated p-values and p-values which arise from a normal approximation.
+4.  Understand the standard normal distribution and its corresponding $z$ test statistic.
+5.  Understand how confidence intervals can provide an estimate for the true parameter.
+
+## Functions covered in this lab
+
+1.  `plot_norm()`
+2.  `pnorm()`
+3.  `qnorm()`
+4.  `prop_test()`
+
+# Lab Tutorial
+
+## Pet Ownership Example
+
+The American Pet Products Association found that a record high of 70% of all households in the United States had pets in 2020. A recent survey of 750 households found that 504 had at least one pet. Does the proportion of U.S. households with pets differ from 0.70?
+
+Our hypotheses to test if there is a difference are $$H_0: p = 0.70 \text{ and } H_A: p \neq 0.70$$
+where $p$ represents the proportion of all households that have at least one pet.
+
+The sample proportion is 
+$$\hat p = \frac{504}{750} = 0.672$$
+
+## Normal Theory Conditions
+
+By the Central Limit Theorem (CLT), the sampling distribution of $\hat p$ will be approximately normal when we satisfy the following conditions:
+
+- \textbf{Independence:} The observations are independent of one another.
+- \textbf{Success-Failure:} We have at least 10 successes and 10 failures.
+
+  - For hypothesis tests, the Success-Failure condition is met when $np_0 \geq 10$ and $n(1 - p_0) \geq 10$
+  - For confidence intervals, the Success-Failure condition is met when $n \hat p \geq 10$ and $n (1 - \hat p) \geq 10$
+
+## Normal Theory Conditions
+
+Let's check the conditions for this example:
+
+- \textbf{Independence:} Since the 750 households are from a random sample, the observations will be independent of one another.
+
+- \textbf{Success-Failure:} Since both $np_0 = 750(0.70) = 515$ and $np_0(1 - p_0) = 750(1 - 0.70) = 225$ are at least 10, the success-failure condition is satisfied.
+
+Since both conditions are satisfied, the the sampling distribution of $\hat p$ will be approximately
+$$
+N \left( \mu = 0.70,\; \sigma = \sqrt{\frac{0.70(1-0.70)}{750}} \right)
+$$
+
+
+## Visualizing the p-value
+
+We can calculate the standard error (SE) and visualize where our observed $\hat p = 0.672$ falls on the normal curve.
+
+Since we have a two-sided alternative hypothesis, we need to consider the other tail of the distribution as well.
+
+Run the `tryit1` code chunk in your notes to visualize the p-value.
+
+```{r tryit1, eval = FALSE}
+SE <- round(sqrt(0.70 * (1 - 0.70) / 750),4)
+
+plot_norm(mean = 0.70, 
+          sd = SE, 
+          shadeValues = c(0.672, 0.728), 
+          direction = "beyond", 
+          col.shade = "darkgreen")
+```
+
+## Visualizing the p-value
+
+```{r tryit1 eval, echo = FALSE}
+SE <- round(sqrt(0.70 * (1 - 0.70) / 750),4)
+
+plot_norm(mean = 0.70, 
+          sd = SE, 
+          shadeValues = c(0.672, 0.728), 
+          direction = "beyond", 
+          col.shade = "darkgreen")
+```
+
+## Approach 1: Using `pnorm()`
+
+We can calculate the p-value (the area in the tailes) by using `pnorm()`. Since we have a two-sided alternative, we find the area in one tail and then double it. Here, since $\hat p$ is less than $p_0$, we find the area in the left tail and double it. Run the `tryit2` chunk in your notes to find the p-value.
+
+```{r tryit2, eval = FALSE, out.width="80%"}
+2 * pnorm(q = 0.672, mean = 0.70, sd = 0.0167, lower.tail = TRUE)
+```
+
+## Approach 1: Using `pnorm()`
+
+The p-value is estimated to be
+
+\small
+```{r tryit2_eval, echo = TRUE}
+2 * pnorm(q = 0.672, mean = 0.70, sd = 0.0167, lower.tail = TRUE)
+```
+
+## Approach 2: Using `prop_test()`
+
+The `pstat5lsSBI` package we have been using also contains a function called `prop_test()` that will calculate the value of the test statistic and the p-value for us. Professor Miller showed you this function briefly in lecture.
+
+You will need to send the function the following arguments:
+
+-   `x`: the number of "successes" in the sample
+-   `n`: the sample size
+-   `p`: the hypothesized population proportion
+-   `alternative`: where to shade (`"two.sided"`, `"less"`, `"greater"`)
+-   `conf.level` (optional): used to get a confidence interval (we will use this later)
+
+## Using `prop_test` for Our Pet Example
+
+We are testing $H_0: p = 0.70 \text{ and } H_A: p \neq 0.70$. You will need to enter values for
+
+-   `x` the number of successes (here the number of households with a pet)
+-   `n` the sample size
+-   `p` the value we assume $p$ to be when $H_0$ is true
+-   `alternative` the direction of $H_A$ (`"two.sided"`, `"less"`, `"greater"` -- make sure the direction is in quotes)
+
+in the `tryIt3` chunk in your notes before you run it.
+
+\vspace{0.25cm}
+
+```{r prop_test_pet, eval = FALSE}
+prop_test(x = 504, 
+          n = 750, 
+          p = 0.70, 
+          alternative = "two.sided")
+```
+
+## Using `prop_test` for Our Pet Example
+
+```{r prop_test_pet_eval, echo = FALSE}
+prop_test(x = 504, 
+          n = 750, 
+          p = 0.70, 
+          alternative = "two.sided")
+```
+
+## Comparing the p-values
+
+To recap, we have *three* ways to compute the p-value for a one proportion hypothesis test:
+
+1.  (Did not do this today) Create a set of simulated proportions using `simulate_chance_model()`, then using the histogram of these simulated proportions to find the p-value 
+2.  Compute the $\mu$ and $\sigma$ for the approximate normal distribution and then use the `pnorm()` function.
+3.  Use the `prop_test()` function (which also uses normal theory) 
+
+Each of these will produce a slightly different result. **No need to worry about how close the values should be, or which value is "best".**
+
+## Conclusion
+
+Since the p-value of 0.094 is greater than $\alpha = 0.05$, we fail to reject the null hypothesis. We don't have enough evidence to suggest that the proportion of households with pets has changed from the 70\% during the pandemic.
+
+## From Testing to Estimation
+
+We use confidence intervals when we
+
+- are interested in estimating the population proportion (and not in testing a specific value)
+- we have rejected $H_0$ in a hypothesis test and would like to find reasonable values for the population proportion.
+
+## Conditions for a Confidence Interval 
+
+As with hypothesis tests, we need to check both the \textbf{Independence} and \textbf{Success-Failure} conditions to determine if we can use the normal distribution to model the sampling distribution of $\hat p$.
+
+The change for confidence intervals is that we checn the Success-Failure condition using $\hat p$:
+
+\begin{center}
+\textbf{Success-Failure:} Both $n \hat p$ and $n (1 - \hat p)$ must be at least 10.
+\end{center}
+
+## Approach 1: Calculating the CI by Hand
+
+A confidence interval for $p$ is
+$$\hat p \pm z^* \sqrt{\frac{\hat p(1 - \hat p)}{n}}$$
+where $z^*$ is the \textbf{critical value}. For CIs for proportions, we have a handy table of common critical values
+\small
+
+|  Confidence Level  |        $z^*$       |
+| :----------------: | :----------------: |
+| 90%                | 1.645              |
+| 95%                | 1.960              |
+| 98%                | 2.326              |
+| 99%                | 2.576              |
+
+## Example: The "Invisible Gorilla" Study
+
+In a famous study, participants watch a video of people passing a basketball and are told to count the number of passes. During the video, a person in a gorilla suit walks across the court, stops to beat their chest, and walks off.
+
+In a recent replication of this experiment with a group of 150 college students, only 66 students noticed the gorilla. Use these results to calculate a 98\% confidence interval for the population proportion of college students who would notice the gorilla.
+
+## Example: The "Invisible Gorilla" Study
+
+First, we check the conditions. Think about the conditions and talk about them with a neighbor. Do you think the conditions are met?
+
+## Example: The "Invisible Gorilla" Study
+
+Checking the conditions:
+
+- \textbf{Independence:} We were not told that this is a random sample of students. However, the students did not know the purpose of the study, so it's reasonable to think that whether or not a student noticed the gorilla was independent of whether or not any other student noticed the gorilla. (Note that you might have a different opinion! That's okay, just explain your reasoning.)
+
+- \textbf{Success-Failure:} Since $n \hat p = 66$ and $n (1 - \hat p) = 150 - 66 = 84$ are both greater than 10, this condition is satified.
+
+## Example: The "Invisible Gorilla" Study
+
+To calculate the 98\% CI by hand, we need to 
+
+- Calculate $\hat p$
+- Identify $z^*$
+- Calculate the SE
+- Calculate the interval
+
+Try this on your own, and we will come back together to compare answers.
+
+## Example: The "Invisible Gorilla" Study
+
+To calculate the 98\% CI by hand, we need to 
+
+- Calculate $\hat p$: $\hat p = \frac{66}{150} = 0.44$
+
+- Identify $z^*$: referring back to the table, we use $z^* = 2.326$
+
+- Calculate the SE: $$\sqrt{\frac{\hat p(1 - \hat p)}{n}} = \sqrt{\frac{0.44(1 - 0.44)}{150}} = 0.001642667$$
+
+- Calculate the interval:
+
+$$\begin{aligned}
+\hat p \pm z^* \sqrt{\frac{\hat p(1 - \hat p)}{n}} &= 0.44 \pm 2.326(0.0405) \\
+& = 0.44 \pm 0.0942 = (0.3458, 0.5342)
+\end{aligned}$$
+
+## Approach 2: Using `prop_test()`
+
+The output from `prop_test()` also provides a confidence interval for the population proportion. By default, R gives us a 95% confidence interval. We need to specify `x` (number of successes), `n` (sample size), and the confidence level if we want something other than a 95\% CI.
+
+In the `tryIt4` chunk, enter `x`, `n`, and set `conf.level` to 0.98 to get a 98% confidence interval.
+
+```{r tryit4, eval = FALSE}
+prop_test(x = 66, 
+          n = 150, 
+          conf.level = 0.98)
+```
+
+## Using `prop_test()` to Find Confidence Intervals
+
+```{r tryit4_eval, echo = FALSE, out.width = "80%"}
+prop_test(x = 66, 
+          n = 150, 
+          conf.level = 0.98)
+```
+
+We estimate (at the 98% confidence level) that the population proportion of college students who would notice the gorilla is between 0.346 and 0.534.
+
+## Using `prop_test()` to Find Confidence Intervals
+
+**Caution:** To get a two-sided confidence interval, the `alternative` argument *must* be set to `two.sided`. If it isn't, you will get a *confidence bound*.
+
+Note that `two.sided` is the default for `prop_test()`, so if you just want a confidence interval you can leave the `alternative` argument off.
+
+Confidence bounds can be useful when we have one-sided hypothesis tests, but we will leave them to your later statistics courses.
+
+## One More Example
+
+X, the social media platform formerly known as Twitter, saw a name change and policy changes once it was under new ownership. Shortly after the name change, seventy-five percent (75%) of all X users said that they planned to keep using X in 2024. Researchers at X would like to know if this rate differs for Millennials, those born between 1981 and 1996. A random sample of 100 Millennial users of X revealed that 65% planned to keep using X in 2024.
+
+## What Would We Expect to See in the Sample?
+
+If the rate of current Millennial users of X is the same as the rate for all X users, how many Millennial users of X from the sample of 100 would we expect to say that they planned to keep using X in 2024?
+
+<!-- We would expect 65 to keep using X in 2024. -->
+
+## Incorrect Alternative
+
+\small
+
+The researchers at X wanted to know if the rate of Millennials who planned to continue using X in 2024 differs from the rate of all users of X. The researcher in charge accidentally ran a one-sided hypothesis test and got the following output
+
+```{r incorrect_alternative}
+prop_test(x = 65, n = 100, p = 0.75, alternative = "less")
+```
+
+## Correcting the Mistake
+
+The value of the test statistic for the incorrect alternative was $z = -2.309$. What should the test statistic be for the correct two-sided test?
+
+-   It should be half as much; that is, $z = -1.155$.
+-   It should be positive instead of negative; that is, $z = 2.309$.
+-   It should be the same; that is, $z = -2.309$.
+-   It should be twice as much; that is, $z = -4.618$.
+
+<!-- The test statistic will not change (the number of successes, sample size, and hypothesized proportion all remain the same). -->
+
+## Correcting the Mistake
+
+The p-value for the incorrect alternative was 0.01046. What should the p-value be for the correct two-sided test?
+
+-   It should be half as much; that is, p-value = 0.00523.
+-   It should be negative instead of positive; that is, p-value = $-0.01046$.
+-   It should be the same; that is, p-value = 0.01046.
+-   It should be twice as much; that is, p-value = 0.02092.
+
+<!-- We need to include the right tail in addition to the left tail. Since the normal distribution is symmetric, the p-value should be twice as much. -->
+
+# Questions
+
+## What Questions Do You Have?

@@ -1,0 +1,105 @@
+---
+title: "PSTAT 5LS Lab 4 Notes"
+author: "Your Name Here"
+output: html_document
+header-includes:
+  - \renewcommand{\footnotesize}{\tiny}
+  - \newcommand{\theHtable}{\thetable}
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(pstat5lsSBI)
+```
+
+# Lab Notes
+
+Use this place to take any notes during your lab section.
+
+- Type any notes here
+- Add new notes by using the dash `-` to create a list
+
+# Lab Tutorial
+
+```{r tryIt1, error = T}
+# Run this chunk to visualize the estimated p-value
+SE <- round(sqrt(0.70 * (1 - 0.70) / 750),4)
+
+plot_norm(mean = 0.70, 
+          sd = SE, 
+          shadeValues = c(0.672, 0.728), 
+          direction = "beyond", 
+          col.shade = "darkgreen")
+```
+
+```{r tryIt2, error = T}
+# Run this chunk to get an estimated p-value using the normal distribution
+2 * pnorm(q = 0.672, mean = 0.70, sd = 0.0167, lower.tail = TRUE)
+```
+
+```{r tryIt3, error = T}
+# Enter the number of successes (x), sample size (n), hypothesize proportion (p), and alternative ("less", "greater", "two-sided") below and then run this chunk to calculate the test statistic and the p-value
+prop_test(x = , 
+          n = , 
+          p = , 
+          alternative = )
+
+```
+
+```{r, tryIt4, error = T}
+# Enter values for `x`, `n`, and `conf.level` below and then run this code chunk to calculate a 98% confidence interval
+prop_test(x = , 
+          n = , 
+          conf.level = )
+```
+
+# Code Cheat Sheet
+
+## `set.seed(seed)`
+Sets the "seed" of R's random number generator. After setting the seed, the sequence of random numbers R will produce is entirely determined/predictable. This is useful for ensuring you get the same results whenever you knit your code.
+
+- `seed` is an integer. The seed you want to set.
+
+## `simulate_chance_model(chanceSuccess, numDraws, numRepetitions)`
+
+- `chanceSuccess`: a number between 0 and 1 represending the probability of observing a "success"
+- `numDraws`: the number of times to draw a poker chip from the bag needed to coplete one repetition of the simulation
+- `numRepetitions`: the number of times to repeat the simulation process
+
+## `abline(linear_model_name)`
+
+- Will plot the line found in `linear_model_name`
+- Use `v = value` to print a vertical line
+
+## `plot_norm()` 
+
+- `mean`: the mean of the normal distribution you'd like to draw ($\mu$)
+- `sd`: the standard deviation or standard error of the normal distribution you'd like to draw ($\sigma$ or $\sqrt{\frac{p_0(1-p_0)}{n}}$, respectively)
+- `shadeValues` (optional): either a number or a vector of two numbers (using `c()`) that are the boundaries of the region you'd like to shade.
+- `direction`: where to shade (`"less"`, `"greater"`, `"between"`, or `"beyond"`)
+- `col.shade`: the color to use when shading
+- any other graphical parameters you want to use to control the appearance of the plot (like `main`, etc.)
+
+## `prop_test(x, n, p, alternative)`
+
+- `x`: the number of successes observed in the study
+- `n`: the sample size of the study
+- `p`: the value of the null hypothesis
+- `alternative`: the direction of the alternative hypothesis; choices are `"two.sided"` (default), `"greater"`, or `"less"`
+
+## `pnorm(q, mean, sd, lower.tail = TRUE)`
+
+- `q`: the x-axis value you want to find an area related to
+- `mean`: the mean of the normal distribution, defaults to 0
+- `sd`: the standard deviation of the normal distribution, defaults to 1
+- `lower.tail` determines whether `pnorm()` finds the area to the left or right of `q`. If `lower.tail` is set to \textcolor{blue}{`TRUE`} (the default), it shades to the \textcolor{blue}{LEFT} If `lower.tail` is set to \textcolor{red}{`FALSE`}, it shades to the \textcolor{red}{RIGHT}.
+
+## Important plotting arguments
+
+### `main = "Title of Your Graph in Double Quotes"`
+- graph title that must be inside a set of double quotes
+
+### `xlab = "x-axis Label of Your Graph in Double Quotes"`
+- the x- (horizontal) axis label that must be inside a set of double quotes
+
+### `ylab = "y-axis Label of Your Graph in Double Quotes"`
+- the y- (vertical) axis label that must be inside a set of double quotes
