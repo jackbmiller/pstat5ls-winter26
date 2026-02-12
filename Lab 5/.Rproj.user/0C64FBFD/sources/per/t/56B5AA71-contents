@@ -1,0 +1,339 @@
+---
+title: "PSTAT 5LS Lab 5"
+output:
+  beamer_presentation:
+    theme: AnnArbor
+    fig_crop: false
+    fig_width: 6
+    fig_height: 4
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(pstat5lsSBI)
+```
+
+# Announcements & Recap
+
+## Announcements
+
+Insert any relevant announcements, important dates, things you want to remember here.
+
+## HW Recap
+
+Write down some common errors that you spotted while you graded/had office hours for HW assignments.
+
+# Learning Objectives
+
+## R Learning Objectives
+1. Create a graphical display of the $t$ distribution.
+1. Generate and interpret R output providing confidence intervals and hypothesis tests for inference for one population mean $\mu$.
+1. Subset a data set to work with a single group.
+
+## Statistical Learning Objectives
+1. Learn to use the $t$ distribution.
+1. Conduct hypothesis tests for one mean and interpret the results
+1. Create confidence intervals for one mean and interpret the results
+
+## Functions Covered in this Lab
+1. `plot_t()`
+1. `pt()`
+1. `qt()`
+1. `t.test()`
+1. `subset()`
+
+# Lab Tutorial
+
+## Working with Means 
+
+Now that we are working with quantitative variables, the parameter we're interested in now is **$\mu$** (mu), the population mean. 
+
+The \textbf{Central Limit Theorem} for means tells us that, when we collect a "sufficiently large" sample of $n$ independent observations from a population with mean $\mu$ and standard deviation $\sigma$, the sampling distribution of $\bar x$ will be approximately normal with mean $\mu$ and standard error (SE) $\frac{\sigma}{\sqrt{n}}$.
+
+Typically, we will not know the population standard deviation $\sigma$. As soon as we estimate $\sigma$ with the sample standard deviation $s$, we need to use the \textbf{$t$ distribution.} The $t$ distribution takes into account the additional variability that we introduce when we estimate $\sigma$.
+
+## The $t$ Distribution
+
+The $t$ distribution, like the standard normal distribution ($N(0, 1)$) that we've seen before, is symmetric about zero and bell-shaped but has "thicker" ("heavier") tails than the normal distribution. 
+
+The $t$ distribution is a "family" of distributions, meaning there are an infinite number of $t$ distributions. We identify which $t$ distribution we're talking about using just one parameter, the \textbf{degrees of freedom (df)}.
+
+As the degrees of freedom increase, the $t$ distribution looks more and more like the $N(0, 1)$ distribution.
+
+## Graphing the $t$ Distribution
+We can  use the `plot_t()` function in the `pstat5lsSBI` package to make a graphical display of the $t$ distribution. 
+
+Arguments to send to `plot_t()`:
+
+- `df`: This is the degrees of freedom for the sample; this week, we can find `df` by computing $n - 1$, where $n$ is the sample size.
+- `shadeValues`: This is the value(s) that we wish to identify, and shade either to the left or to the right of. To include two values we will combine them by using the `c()` function.
+- `direction`: This is the direction to shade. The choices are: "less", "greater", "beyond", "between". The text must be written in double quotes. 
+- `col.shade`: Optional color choice for the graph.
+
+## Finding Probabilites Under a $t$ Distribution
+We can find probabilities related to the $t$ distribution using the `pt()` function. The `pt()` function is analogous to the `pnorm()` function we used with normal distributions.
+
+Arguments to send to `pt()`:
+
+- `q`: The observation is sometimes called a **quantile**, thus the **q** notation. 
+- `df`: This is the degrees of freedom for the sample; this week, we can find `df` by computing $n - 1$, where $n$ is the sample size.
+- `lower.tail`: By default, this argument is set to `TRUE`, meaning that we *want* the lower tail (i.e., to shade to the left). If we *don't want* the lower tail, and we actually want the *upper* tail (i.e., to shade to the right), we should set this to `FALSE`.
+
+The mean of a $t$ distribution is 0, and the standard deviation of a $t$ distribution is a function of the degrees of freedom, so we *don't* need to specify the mean and the standard deviation to use `pt()`.
+
+## Finding the Quantile on a $t$ Distribution
+Also, we can use `qt()` to get quantiles of the $t$ distribution. The `qt()` function will be helpful to find $t^*$ critical values needed for confidence intervals for means.
+
+Arguments to send to `qt()`:
+
+- `p`: The probability to the **left by default** of the quantile we wish to find. If we want the probability to the *right*, we should tinker with `lower.tail` as specified below.
+- `df`: This is the degrees of freedom for the sample; this week, we can find `df` by computing $n - 1$, where $n$ is the sample size.
+- `lower.tail`: By default, this argument is set to `TRUE`, meaning that we *want* the lower tail (i.e., to shade to the left). If we *don't want* the lower tail, and we actually want the *upper* tail (i.e., to shade to the right), we should set this to `FALSE`.
+
+## Back to the Penguins!
+Run the `loadPenguins` code chunk in your notes so that we can use the penguins data set.
+
+```{r loadPenguins, echo = FALSE}
+penguins <- read.csv("penguins.csv", stringsAsFactors = TRUE)
+```
+
+Let's say we want to investigate the population mean flipper length of penguins living in the Palmer Archipelago. 
+
+In order to use our technology for constructing confidence intervals and performing hypothesis tests for means, we need two conditions to hold. **What are they?**
+
+<!-- Ask the students what they think the conditions are before you move on to the next slide. -->
+
+## Conditions for a CI or HT for the Population Mean
+
+The conditions are
+
+1. **Independence:** The observations must be independent of one another. 
+2. **Normality:** The variable follows a normal distribution.
+
+How can we check that we meet both of these conditions?
+
+## Checking the Conditions for a CI or HT for the Population Mean
+To check the conditions:
+
+1. **Checking Independence:** Verify that we have taken a random sample from the population. If we don't have a random sample, we should consider whether it's reasonable or not to believe that the observations are independent of one another.
+2. **Checking Normality:** Examine a histogram of the sample data. When the sample is small, we require that the sample observations come from a normally distributed population. We can relax this condition more and more for larger and larger sample sizes.
+
+\footnotesize
+Saying "small $n$" and "large $n$" is still vague, so here are a few guidelines:
+
+- slight skew is okay for sample sizes up to about 15
+- moderate skew is okay for sample sizes up to about 30
+- strong skew is okay for sample sizes of about 60 or more
+
+## Are the Observations for the Penguins Data Set Independent of One Another?
+Do you think that the penguins data is from a random sample? If not, do you think that the observations of penguins are independent of one another?
+
+\vspace{3cm}
+
+<!-- Ask the students what they think before moving to the next slide. -->
+
+## Are the Observations for the Penguins Data Set Independent of One Another?
+
+\textcolor{blue}{We are not told if this data is from a random sample. It might be reasonable to assume that each penguin's information was collected independently of another penguin, so we can proceed.}
+
+\small
+**Note:** Checking independence typically means that we need to know how the data was collected. If you're doing your own research, you'll do what you can to make sure of this. For the purposes of PSTAT 5LS, Prof Miller will tell you that the data are from a random sample or that the independence condition is satisfied.
+
+## Are Penguin Flipper Lengths Normally Distributed?
+
+Run the `tryit3` code chunk of your notes document to create a histogram of the penguin flipper length. (Don't forget to first run the `loadPenguins` chunk to read in the data!) Does the distribution of flipper length appear to be approximately bell-shaped?
+
+```{r flipperHistCode, echo = FALSE, out.width = "50%", fig.align = "center"}
+hist(penguins$flipper_length_mm,
+     main = "Histogram of Flipper Length",
+     xlab = "Flipper length (mm)",
+     col = "#09847A")
+```
+
+<!-- The histogram shows a bimodal distribution! This tells us that there are subgroups that we should be evaluating separately. -->
+
+## Dealing with a Bimodal Distribution
+
+In lecture, Professor Miller mentioned that bimodal distributions are indicative of subgroups. Flipper lengths differ for the three species of penguins, so we need to look at them individually. 
+
+For the purpose of our work in this lab, we will work the flipper lengths for the Gentoo penguins. 
+
+## Subsetting the Data
+
+Run the `gentoo_subset` code chunk in your notes document to create a data set with only the 119 Gentoo penguins.
+
+```{r gentoo_subset, error = T}
+gentoo <- subset(penguins, penguins$species == "Gentoo")
+
+```
+
+Note that the Environment pane now has `gentoo` listed.
+
+## Create a Histogram to Examine the Distribution
+
+Let's examine the flipper lengths for the Gentoo penguins in the `tryit4` code chunk. Be sure to specify your variable and a label for the x-axis (we've taken care of the title for you).
+
+```{r flipperHistGentoo, echo = FALSE, out.width = "80%", fig.align = "center"}
+hist(gentoo$flipper_length_mm,
+     main = "Histogram of Flipper Length for Gentoo Penguins",
+     xlab = "Flipper length (mm)",
+     col = "#09847A")
+```
+
+## Checking Normality
+
+Use the histogram you created to check the normality condition. Does it appear that the flipper lengths for the Gentoo penguins came from a normally distributed population. If not, what can we do?
+
+<!-- Ask the students to think about this before you move to the next slide. -->
+
+## Checking Normality
+
+The histogram of flipper lengths for the Gentoo penguins is unimodal and slightly skewed to the right. Skew does not impact larger data sets as much as it does smaller data sets. Since 119 is a large sample, we can relax the normality condition. 
+
+(The reason we can relax the normality condition is that the Central Limit Theorem tells us that the sampling distribution of the sample mean $\bar x$ flipper length will be approximately normal.)
+
+## Hypothesis Test for a Mean
+
+When we have the data, we can use a new function called `t.test()` to have R compute the confidence interval for the mean flipper length. 
+
+**Note:** We \textbf{must have the data to run \texttt{t.test()}}. If we only have summary statistics, we need to calculate the test statistic by hand and then use the function `pt()` in R to calculate the p-value. 
+
+## Hypothesis Test for a Mean
+
+According to Australia's Department of Climate Change, Energy, the Environment and Water, Gentoo penguins have an average flipper length of 230 mm. Is the average flipper length for the Gentoo penguins living on Palmer Archipelago different? Use $\alpha = 0.05$.
+
+Thus we are testing:
+
+$H_0: \mu = 230$ 
+
+$H_a: \mu \neq 230$
+
+where $\mu$ is the mean flipper length in the population of Gentoo penguins living in the Palmer Archipelago.
+
+## Using `t.test()` to Run this Hypothesis Test
+
+Since we have the data in R, let's use `t.test()` to run the hypothesis test.
+
+Try this code out in the `tryit5` code chunk in your notes document. Make sure to specify the hypothesized mean in the `mu` argument and the alternative in the `alternative` argument ("two.sided", "less", "greater"). 
+
+\vspace{0.25cm}
+
+```{r flipper_length_HT_Code, eval = FALSE}
+t.test(gentoo$flipper_length_mm, 
+       mu =  230, 
+       alternative =  "two.sided")
+```
+
+## Using `t.test()` to Run this Hypothesis Test
+
+```{r flipper_length_HT, echo = FALSE}
+t.test(gentoo$flipper_length_mm, 
+       mu =  230, 
+       alternative =  "two.sided")
+```
+
+## To Reject or Not to Reject? 
+
+When R reports a p-value of < 2.2e-16, it is telling us that the p-value is less than $2.2 \times 10^{-16}$. In other words, the p-value is close to zero. Because our p-value is less than the significance level of 0.05, we reject the null hypothesis.
+
+## Conclusion for the Hypothesis Test
+
+We've decided to reject the null hypothesis, so what's the conclusion?
+
+<!-- Have the students think about this before going to the next slide. -->
+
+## Conclusion for the Hypothesis Test
+
+The data provide convincing evidence that the mean flipper length for the population of Gentoo penguins on the Palmer Archipelago differs from 230 mm.
+
+\vspace{1cm}
+
+**Note:** Don't use language that is too strong when you are writing your conclusions. We are not proving or disproving anything with our analyses. We cannot say that the mean flipper length *is* different from 230 mm. We are just saying that we don't think the mean flipper length is 230 mm because it would have been very unlikely for us to get a sample mean of 217.235 mm in a sample of 119 Gentoo penguins if the mean flipper length in the population of Gentoo penguins is 230 mm.
+
+## Creating a Confidence Interval for the Mean Flipper Length
+
+Since we rejected the null hypothesis that the mean flipper length of Gentoo penguins is 230 mm, it makes sense to come up with an estimate for this parameter.
+
+Let's create a 95% confidence interval for the mean flipper length of Gentoo penguins.
+
+First, let's do this by hand.
+
+## Creating a Confidence Interval for the Mean Flipper Length
+
+As you learned in lecture, when we have a sample of $n$ independent observations from a nearly normal distribution, a confidence interval for the population mean $\mu$ is
+
+$$\bar x \pm t^*\frac{s}{\sqrt{n}}$$
+
+## Creating a Confidence Interval for the Mean Flipper Length
+
+Here are the summary statistics for the mean flipper length of Gentoo penguins:
+
+```{r flipper_length_stats, echo = TRUE}
+summary(gentoo$flipper_length_mm)
+sd(gentoo$flipper_length_mm)
+```
+
+Run the `tryit6` chunk in your notes to have R calculate these summary statistics for you. 
+
+## Creating a Confidence Interval for the Mean Flipper Length
+
+We have some parts of the confidence interval calculation, but we still need the critical value $t^*$:
+
+$$\bar x \pm t^*\frac{s}{\sqrt{n}} = 217.2353 \pm t^*\frac{6.585431}{\sqrt{119}}$$
+
+## Finding the Critical Value $t^*$ with R
+
+We are using the $t$ distribution with $df = n - 1 = 119 - 1 = 118$. For a 95% confidence interval, we want an area of 0.95 between $-t^*$ and $t^*$, leaving 1 – 0.95 = 0.05 to be split between the two tails (0.025 in each tail).
+
+```{r, echo = FALSE, out.width = "80%", fig.align = "center"}
+plot_t(df = 118, shadeValues = c(-1.9802, 1.9802), direction = "beyond")
+```
+
+## Finding the Critical Value $t^*$ with R
+
+We will use the `qt()` function get $t^*$. There is 0.025 area in each tail, so we can find $t^*$ as, leaving 1 – 0.95 = 0.05 to be split between the two tails.
+
+```{r find_crit_val1, echo = TRUE}
+qt(p = 0.025, df = 118, lower.tail = FALSE)
+```
+
+```{r find_crit_val2, echo = TRUE}
+qt(p = 0.975, df = 118, lower.tail = TRUE)
+```
+
+Note that both of these get us the same $t^*$ value--it's up to you which code you prefer. Enter the values for `p`, `df`, and `lower.tail` in the `tryit7` code chunk in your notes.
+
+## Creating a Confidence Interval for the Mean Flipper Length
+Now we can finish calculating the 95% confidence interval for the population mean flipper length of Gentoo penguins living in the Palmer Archipelago. 
+
+$$217.2353 \pm 1.980272 \cdot \frac{6.585431}{\sqrt{119}} = 217.2353 \pm 1.195 = 216.040 \textrm{ to } 218.430$$
+
+## Interpreting a Confidence Interval for One Mean
+We estimate with 95% confidence that the mean flipper length for all Gentoo penguins in the Palmer Archipelago is between 216.04 mm and 218.43 mm.
+
+(This interval gives a range of reasonable values for the mean flipper length for all Gentoo penguins in the Palmer Archipelago.)
+
+## Creating a Confidence Interval for the Mean Flipper Length Using R
+
+When we have the data, it's much easier to use `t.test()` to construct a confidence interval. For confidence intervals, we do not specify the `alternative` (we aren't testing hypotheses), but we need to specify the confidence level as a decimal in `conf.level`. As with hypothesis tests, we can only use `t.test()` if we have the data in R. 
+
+## Creating a Confidence Interval for the Mean Flipper Length
+
+Since we only want a confidence interval (we are not doing a hypothesis test), we do not need to specify a hypothesized mean (we don't have one!) nor do we have to specify the alternative. We *do* have to specify the confidence level. Try this code out in the `tryit8` code chunk in your notes document (be sure to specify `conf.level`).
+
+```{r flipper_length_CI_code, eval = FALSE}
+t.test(gentoo$flipper_length_mm, conf.level = 0.95)
+```
+
+## Creating a Confidence Interval for the Mean Flipper Length
+
+```{r flipper_length_CI, echo = FALSE}
+t.test(gentoo$flipper_length_mm, conf.level = 0.95)
+```
+
+As expected, R produce the same confidence interval that we found by hand.
+
+# Questions
+
+## What Questions Do You Have?
