@@ -1,0 +1,174 @@
+---
+title: "PSTAT 5LS Lab 6c"
+output:
+  beamer_presentation:
+    theme: AnnArbor
+    fig_crop: false
+    fig_width: 6
+    fig_height: 4
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(pstat5lsSBI)
+```
+
+<!-- # Announcements & Recap -->
+
+<!-- ## Announcements -->
+
+<!-- Insert any relevant announcements, important dates, things you want to remember here. -->
+
+<!-- ## HW Recap -->
+
+<!-- Write down some common errors that you spotted while you graded/had office hours for HW assignments. -->
+
+# Learning Objectives
+
+## R Learning Objectives
+1. Create a variable consisting of the differences in corresponding observations.
+1. Generate and interpret R output providing confidence intervals and hypothesis tests for inference for and the mean of the differences $\mu_d$.
+
+## Statistical Learning Objectives
+1. Understand confidence intervals and hypothesis tests for the mean of the differences.
+
+# Lab Tutorial
+
+## Mean of the Differences for Paired Data
+
+When we are working with paired data, the parameter is the *mean of the differences*
+$$\mu_{\text{d}}$$
+
+The point estimate (sample statistic) is 
+$$\bar{x}_{\text{d}}$$
+
+where the $\text{d}$'s represent the difference in observations.
+
+## Mean of the Differences for Paired Data
+
+The conditions are
+
+1. **Independence**: The observed \textcolor{red}{differences} should be independent of one another. This condition is typically satisfied with a random sample of the differences, but you might need to think about whether the differences are independent from observation to observation.
+
+2. **Normality**: The observed \textcolor{red}{differences} in observations should come from a (nearly-)normal population of differences. We will check by making a histogram of the differences in the sample. If the sample looks like it came from a population that is normally distributed, then this condition is met. Note that we can relax the condition more and more for larger and larger sample sizes.
+
+## Births from North Carolina in 2004
+The `penguins` data set we have used doesn't contain anything that is paired data. So we turn our attention to a data set called `births.csv`.
+
+This data set was collected by taking a random sample of 800 entries in a database containing information about babies born to cisgender heterosexual couples in North Carolina in 2004. Variables include the father's age, the mother's age, the weight of the baby, etc. 
+
+Let's say we want to estimate the average difference in the age of the father and the mother of babies born in North Carolina in 2004. Do you think that the father's age and the mother's age in this data set are independent of each other, or, do you think that the father's age and the mother's age in this data set are dependent on each other?
+
+## Paired Data
+We should **pair** the data for father's age and mother's age together, as both ages were collected from the same observation (here, same baby). So we have one sample from one population of babies born in North Carolina in 2004. 
+
+Thus our parameter of interest is $\mu_{\text{d}}$, which represents the population mean of the difference in the age of the father and the mother of a baby born in North Carolina in 2004.
+
+## Normality Condition
+Recall that our normality condition requires that the observations of the difference in age need to come from a (nearly-)normal population.
+
+So we will need to create a histogram of the **differences** in the parents' ages from the sample, and see if the distribution is approximately bell-shaped. 
+
+## Creating a Variable of the Differences
+In order to make this histogram, we need to create a new variable that is defined as the difference in the father's age and mother's age for the babies born in North Carolina in 2004.
+
+First, let's read in the data. Run the `tryit6` code chunk in your notes file.
+
+```{r readIn}
+babies <- read.csv("births.csv", stringsAsFactors = TRUE)
+
+```
+
+## Creating a Variable of the Differences
+Let's look at structure of the `babies` data set so we can figure out which variables indicate the father's age and the mother's age. 
+
+Write the code you need to peek at the structure of the data set in the `tryit7` code chunk and then run the code chunk.
+
+```{r structureCode, eval = FALSE}
+str(babies)
+
+```
+
+What are the variables that indicate the father's age and the mother's age?
+
+<!-- The variables are `fage` for father's age and `mage` for mother's age. -->
+
+## Creating a Variable of the Differences
+Next, let's add a variable called `ageDiff` to this `babies` data set. We will define the difference as father's age (`fage`) minus mother's age (`mage`). 
+
+Create this new variable in the `tryit8` code chunk in your notes file.
+
+```{r diffVariable}
+babies$ageDiff <- babies$fage - babies$mage
+
+```
+
+## Creating a Histogram of the Differences
+We can now create the histogram of the differences in age between the father and the mother for the sampled babies born in North Carolina in 2004. 
+
+The title is really long, so we will go to the next line where we want a line break. Specify the variable name in the `tryit9` code chunk in your notes and then run it to create a histogram.
+
+\scriptsize
+```{r histOfDiffsCode, eval = FALSE}
+hist(babies$ageDiff, 
+     main = "Histogram of the Differences in Age of the Father and Mother
+     of Babies Born in North Carolina in 2004",
+     xlab = "Difference of Age in Years", 
+     col = "lightgreen")
+```
+\normalsize
+
+## Histogram of the Differences
+```{r histOfDiffs, echo = FALSE, fig.align = "center", out.width = "65%"}
+hist(babies$ageDiff, 
+     main = "Histogram of the Differences in Age of the Father and Mother 
+     of Babies Born in North Carolina in 2004",
+     xlab = "Difference of Age in Years", 
+     col = "lightgreen")
+```
+
+Does the normality condition appear to be satisfied?
+
+<!-- Ask the students what they think before showing the next slide. -->
+
+## Histogram of the Differences
+```{r histOfDiffsNormal, echo = FALSE, fig.align = "center", out.width = "65%"}
+hist(babies$ageDiff, 
+     main = "Histogram of the Differences in Age of the Father and Mother 
+     of Babies Born in North Carolina in 2004",
+     xlab = "Difference of Age in Years", 
+     col = "lightgreen")
+```
+
+\small
+This histogram is unimodal and slightly right skewed. However, the sample size (800) is definitely large enough to relax the normality condition. 
+
+(Remember that the reason we can relax the normality condition is that the sample mean of the differences $\bar x_d$ will be approximately normal.)
+
+## Estimating the Mean of the Differences
+We want to estimate the mean of the differences in age between fathers and mothers for all babies born in North Carolina in 2004. This requires creating a confidence interval. Let's create a 90% confidence interval. Try this out in the `tryit10` code chunk in your notes file.
+
+\vspace{0.5cm}
+
+```{r confIntervalCode, eval = FALSE}
+t.test(babies$ageDiff, conf.level = 0.90)
+```
+
+## Confidence Interval R Output
+
+```{r confInterval}
+t.test(babies$ageDiff, conf.level = 0.90)
+```
+
+## Interpreting the Confidence Interval
+
+Interpret the confidence interval.
+
+## Interpreting the Confidence Interval
+
+The 90% confidence interval suggests that, on average, fathers are between 2.38 and 2.88 years older than mothers for all babies born in North Carolina in 2004.
+
+# Questions
+
+## What Questions Do You Have?

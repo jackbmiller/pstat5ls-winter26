@@ -1,0 +1,220 @@
+---
+title: "PSTAT 5LS Lab 6a"
+output:
+  beamer_presentation:
+    theme: AnnArbor
+    fig_crop: false
+    fig_width: 6
+    fig_height: 4
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(pstat5lsSBI)
+```
+
+# Announcements & Recap
+
+## Announcements
+
+Insert any relevant announcements, important dates, things you want to remember here.
+
+## HW Recap
+
+Write down some common errors that you spotted while you graded/had office hours for HW assignments.
+
+# Learning Objectives
+
+## R Learning Objectives
+1. Create histograms for just one group in order to check the normality conditions.
+1. Generate and interpret R output providing hypothesis tests for inference for two independent means $\mu_1 - \mu_2$.
+
+## Statistical Learning Objectives
+1. Differentiate between scenarios for one mean, two independent means, and the mean of the differences.
+1. Understand hypothesis tests for a difference in two independent means.
+
+# Lab Tutoria
+
+## Collecting Two Sets of Numeric Data
+Today, we're talking about inference when data from 2 **sets** of a *numeric* variable is collected. Let's first revisit the conditions. 
+
+## Condition 1: Independence Within the Sample(s)
+We are **always** hoping that the observations within the sample (or within the sample**s**) are independent of one another. When we have taken a random sample (or sample**s**), we can generalize to the appropriate population (or population**s**).
+
+## Condition 2: Independence Between the Samples
+The question we have to ask ourselves, when dealing with 2 sets of observations of a numeric variable: 
+
+Are the two sets of observations independent of **one another**, such that observations in one sample tell us nothing about the observations in the other sample (and vice versa)?
+
+If the answer is **yes**, then the appropriate method of inference is to keep the data separate and discuss **a difference in two population means**, with parameter $\mu_1 - \mu_2$.
+
+If the answer is **no**, then the appropriate method of inference is to pair the data and discuss **the mean of the population of differences**, with parameter $\mu_{\text{d}}$.
+
+## Paired or Independent?
+
+Consider the following scenarios and determine if the data are paired or if the data come from independent samples.
+
+a. A company wants to compare job satisfaction levels between their full-time and part-time employees. They survey 100 full-time and 100 part-time employees. 
+
+<!-- Independent. While the employees all work for the same company, there is not a one-to-one correspondence between one full-time and one part-time employee. -->
+\vspace{1cm}
+
+b. A psychologist is studying the effects of caffeine on reaction times. They test each participant's reaction time once after drinking regular coffee and once after drinking decaf coffee, with tests done on separate days.
+
+<!-- Paired. There are two measurements for each participant. -->
+\vspace{1cm}
+
+## Paired or Independent?
+
+c. An educational researcher wants to investigate if there's a difference in math performance between students who attend public schools and those who attend private schools. They randomly select 200 8th grade students from public schools and 200 from private schools, then administer the same standardized math test to both groups.
+
+<!-- Independent. We have two totally separate groups with no inherent pairing. -->
+\vspace{1cm}
+
+d. A language learning app developer wants to assess the improvement in users' vocabulary after using the app for two months. They test the vocabulary of 100 users when they first download the app and then test the users again after two months of app usage.
+
+<!-- Paired. We have two measurements for each app user. -->
+\vspace{1cm}
+
+## Difference in Two Means
+When we have two independent samples, we need to work with the *difference in two means*. In this scenario, our parameter is
+
+$$\mu_1 - \mu_2$$
+
+where $\mu_1$ represents the population mean for "group 1" and $\mu_2$ represents the population mean for "group 2".
+
+The point estimate is 
+$$\bar{x}_1 - \bar{x}_2$$
+
+## Difference in Two Means
+
+The conditions are
+
+1. **Independence \textcolor{red}{within} each sample:** The observations within each sample are independent. 
+
+\small
+This condition is typically satisfied by taking two random samples (one from each population) or by taking one random sample and splitting it into two independent groups (e.g., in-state students and out-of-state students).
+
+\normalsize
+2. **Independence \textcolor{red}{between} the samples:** The two samples are independent of one another such that observations in one sample tell us nothing about the observations in the other sample (and vice versa). 
+3. **Normality** (must check for both groups): Each sample of observations should come from a nearly-normal population. 
+
+\small
+We will check by making a histogram of the sample observations from each of the groups. We can relax the condition more and more for larger and larger sample sizes.
+
+## Back to the Penguins!
+Run the `loadPenguins` code chunk in your notes so that we can use the penguins data set.
+
+```{r loadPenguins, echo = FALSE}
+penguins <- read.csv("penguins.csv", stringsAsFactors = TRUE)
+```
+
+## Subsetting the Data to Only Include Two Groups
+Let's compare the mean flipper lengths of Adelie and Chinstrap penguins. 
+
+First, we'll subset the data to just involve Adelie and Chinstrap penguins. This is only because we're not interested in Gentoo penguins for this question, so we'll take them out. 
+
+Since we are interested in penguins that are *either* Adelie *or* Chinstrap, R has an easy way to achieve this by using the `%in%` operator. Don't forget the double quotes around Adelie and Chinstrap!
+
+Run the code in the `tryit1` code chunk in your notes document.
+\footnotesize
+```{r penguinsSubset}
+penguinsSubset <- subset(penguins,
+                         species %in% c("Adelie", "Chinstrap"))
+```
+
+## Normality Condition x 2
+To check the normality conditions, we will need to make **two** histograms: one for the Adelie penguins, and another for the Chinstrap penguins.
+
+Since we only need these one group subsets for the histograms, we will not bother to give it a name. Instead, we will embed the subset code inside the histogram code.
+
+## Histogram of Just Adelie Penguins Flipper Length
+
+Let's first create a histogram of the flipper lengths for the Adelie penguins. Run the `tryit2` code chunk in your notes document to generate this histogram.
+
+\vspace{1cm}
+
+\scriptsize
+```{r adelieHistogramCode, eval = FALSE}
+hist(penguinsSubset$flipper_length_mm[penguinsSubset$species == "Adelie"],
+     main = "Histogram of Flipper Lengths of Adelie Penguins",
+     xlab = "Flipper Length in mm", 
+     col = "darkorange1")
+```
+
+## Histogram of Just Adelie Penguins Flipper Length
+```{r adelieHistogram, echo = FALSE}
+hist(penguinsSubset$flipper_length_mm[penguinsSubset$species == "Adelie"],
+     main = "Histogram of Flipper Lengths of Adelie Penguins",
+     xlab = "Flipper Length in mm",
+     col = "darkorange1")
+```
+
+## Histogram of Just Chinstrap Penguins Flipper Length
+
+Next up, let's create a histogram of the flipper lengths for the Chinstrap penguins. Change the code in the `tryit3` code chunk in your notes document so that you get the histogram we need.
+
+\vspace{1cm}
+
+\scriptsize
+```{r chinstrapHistogramCode, eval = FALSE}
+hist(penguinsSubset$flipper_length_mm[penguinsSubset$species == "Chinstrap"],
+     main = "Histogram of Flipper Lengths of Chinstrap Penguins",
+     xlab = "Flipper Length in mm",
+     col = "mediumorchid2")
+```
+
+## Histogram of Just Chinstrap Penguins Flipper Length
+```{r chinstrapHistogram, echo = FALSE}
+hist(penguinsSubset$flipper_length_mm[penguinsSubset$species == "Chinstrap"],
+     main = "Histogram of Flipper Lengths of Chinstrap Penguins",
+     xlab = "Flipper Length in mm",
+     col = "mediumorchid2")
+```
+
+## Normality Condition
+Does the normality condition appear to be satisfied? 
+
+\vspace{3cm}
+
+<!-- Each of the two histograms appear to be unimodal and approximately bell-shaped, so it is reasonable that the flipper lengths come from populations with normal distributions, and the normality condition is reasonably met for both groups. -->
+
+<!-- \small -->
+<!-- \textcolor{blue}{(Note that we don't need to check the sample sizes to see if we can relax the normality condition because we think the normality condition is met.)} -->
+
+## Hypothesis Test for the Difference in Two Means
+We would like to test the claim that there **is** a difference in the mean flipper length for the two groups, Adelie penguins and Chinstrap penguins. 
+
+$$H_0: \mu_1 - \mu_2 = 0 \quad H_A: \mu_1 - \mu_2 \neq 0$$
+
+The parameter here is $\mu_1 - \mu_2$, where $\mu_1$ is the mean flipper length in mm for Adelie penguins on Palmer Archipelago, and $\mu_2$ is the mean flipper length in mm for Chinstrap penguins on Palmer Archipelago.
+
+## Performing the *t*-test for the Difference in Two Population Means
+
+The code to conduct the two-sample test is in the `tryit4` code chunk in your notes document. Make sure to specify the alternative in the `alternative` argument ("two.sided", "less", "greater") before running the chunk.
+
+\scriptsize
+```{r twoSampleTCode, eval = FALSE}
+t.test(flipper_length_mm ~ species,
+       data = penguinsSubset,
+       alternative = "two.sided")
+```
+
+## Performing the *t*-test for the Difference in Two Population Means
+
+\small
+```{r twoSampleT, echo = FALSE}
+t.test(flipper_length_mm ~ species,
+       data = penguinsSubset,
+       alternative = "two.sided")
+```
+
+## Decision and Conclusion
+From the R output, we see that the test statistic is $t = -5.6115$ and the *p*-value is tiny (much less than any of the standard significance levels.) We reject the null hypothesis. 
+
+Our analysis suggests that there is a difference between the mean flipper length in mm for Adelie penguins on Palmer Archipelago and the mean flipper length in mm for Chinstrap penguins on Palmer Archipelago.
+
+# Questions
+
+## What Questions Do You Have?

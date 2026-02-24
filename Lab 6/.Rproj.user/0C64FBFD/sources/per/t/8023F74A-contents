@@ -1,0 +1,106 @@
+---
+title: "PSTAT 5LS Lab 6b"
+output:
+  beamer_presentation:
+    theme: AnnArbor
+    fig_crop: false
+    fig_width: 6
+    fig_height: 4
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(pstat5lsSBI)
+```
+
+# Announcements & Recap
+
+## Announcements
+
+Insert any relevant announcements, important dates, things you want to remember here.
+
+<!-- ## HW Recap -->
+
+<!-- Write down some common errors that you spotted while you graded/had office hours for HW assignments. -->
+
+# Learning Objectives
+
+## R Learning Objectives
+1. Create histograms for just one group in order to check the normality conditions.
+1. Generate and interpret R output providing confidence intervals for inference for two independent means $\mu_1 - \mu_2$.
+
+## Statistical Learning Objectives
+1. Understand confidence intervals for a difference in two independent means.
+1. Understand confidence intervals and hypothesis tests for the mean of the differences.
+
+# Lab Tutorial
+
+## Difference in Two Means Confidence Interval
+
+We saw statistically significant results suggesting that there is a difference between the two populations means
+
+In cases like this, it is helpful to construct a confidence interval to find a range of reasonable values for that difference. (Confidence intervals are also helpful when we are simply interested in estimating the parameter.) 
+
+As a reminder, the parameter here is $\mu_1 - \mu_2$, where $\mu_1$ is the mean flipper length in mm for Adelie penguins on Palmer Archipelago, and $\mu_2$ is the mean flipper length in mm for Chinstrap penguins on Palmer Archipelago.
+
+## Load the Data and Create the Subset
+
+Let's be sure we have the data we need. To do so, run the 
+
+```{r loadPenguins_lab6b, echo = FALSE}
+penguins <- read.csv("penguins.csv", stringsAsFactors = TRUE)
+penguinsSubset <- subset(penguins,
+                         species %in% c("Adelie", "Chinstrap"))
+```
+
+## Computing the 98% Confidence Interval for the Difference in Two Population Means
+
+Try this code in the `tryit5` code chunk in your notes document. Be sure to specify the confidence level before running the chunk.
+
+```{r twoSampleCICode, eval = FALSE}
+t.test(flipper_length_mm ~ species,
+       data = penguinsSubset,
+       conf.level = 0.98)
+```
+
+## Computing the 98% Confidence Interval for the Difference in Two Population Means
+
+```{r twoSampleCI, echo = FALSE}
+t.test(flipper_length_mm ~ species,
+       data = penguinsSubset,
+       conf.level = 0.98)
+```
+
+## Interpreting the Confidence Interval
+The 98% confidence interval is (-8.124, -3.317). 
+
+A fairly standard way to interpret this confidence interval is to talk about reasonable values of the difference between the two means: 
+
+"We estimate, with 98% confidence, that the difference between the mean flipper length in mm for Adelie penguins on Palmer Archipelago and the mean flipper length in mm for Chinstrap penguins on Palmer Archipelago is between -8.124 mm and -3.317."
+
+This confidence interval is awkward. A better way to understand what the confidence interval tells us is to say
+
+"We estimate, with 98% confidence, that the mean flipper length in mm for Adelie penguins on Palmer Archipelago is between 3.317 mm and 8.124 mm *less* than the mean flipper length in mm for Chinstrap penguins on Palmer Archipelago."
+
+## Tie between Hypothesis Tests and Confidence Intervals
+
+Remember that confidence intervals use what we have from our sample(s) to give us a range of values we think are reasonable for the parameter. 
+
+If we had not already conducted a hypothesis test for the difference in the two means, the 98% confidence interval we created could be used to test the hypotheses 
+$$H_0: \mu_1 - \mu_2 = 0$$
+$$H_A: \mu_1 - \mu_2 \neq 0$$
+
+at the $\alpha = 0.02$ significance level.
+
+<!-- Be sure that the students understand why this would be a two-sided test at the 0.02 significance level. -->
+
+## Tie between Hypothesis Tests and Confidence Intervals
+
+The 98% confidence interval for the difference between the mean flipper length in mm for Adelie penguins and the mean flipper length in mm for Chinstrap penguins is -8.124 mm to -3.317. Do we reject or fail to reject $H_0: \mu_1 - \mu_2 = 0$ at the $\alpha = 0.02$ significance level?
+
+<!-- The confidence interval does not include 0, which it would need to include for use to conclude that there is no difference in the mean flipper lengths for the two penguin species. We would reject the null hypothesis at the 0.02 significance level. -->
+
+<!-- # Questions -->
+
+<!-- ## What Questions Do You Have? -->
